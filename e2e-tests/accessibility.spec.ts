@@ -13,6 +13,37 @@ test.describe('Accessibility Tests', () => {
     expect(accessibilityScanResults.violations).toEqual([]);
   });
 
+  test('high contrast mode toggles and persists across reloads', async ({ page }) => {
+    await page.goto('/');
+
+    const contrastToggle = page.getByTestId('contrast-toggle');
+    const root = page.locator('html');
+
+    await expect(contrastToggle).toHaveAttribute('aria-pressed', 'false');
+
+    await test.step('Enable high contrast mode with the keyboard', async () => {
+      await contrastToggle.focus();
+      await page.keyboard.press('Enter');
+      await expect(contrastToggle).toHaveAttribute('aria-pressed', 'true');
+      await expect(root).toHaveClass(/high-contrast/);
+    });
+
+    await test.step('Verify preference persists after reload', async () => {
+      await page.reload();
+      await expect(contrastToggle).toHaveAttribute('aria-pressed', 'true');
+      await expect(root).toHaveClass(/high-contrast/);
+    });
+
+    await test.step('Disable high contrast mode and verify it persists', async () => {
+      await contrastToggle.click();
+      await expect(contrastToggle).toHaveAttribute('aria-pressed', 'false');
+      await expect(root).not.toHaveClass(/high-contrast/);
+      await page.reload();
+      await expect(contrastToggle).toHaveAttribute('aria-pressed', 'false');
+      await expect(root).not.toHaveClass(/high-contrast/);
+    });
+  });
+
   test('game details page should not have accessibility violations', async ({ page }) => {
     await page.goto('/game/1');
     await page.waitForSelector('[data-testid="game-details"]', { timeout: 10000 });
