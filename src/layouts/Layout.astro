@@ -17,6 +17,17 @@ const { title = "Tailspin Toys" } = Astro.props;
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <meta name="generator" content={Astro.generator} />
         <title>{title}</title>
+        <script is:inline>
+            (() => {
+                try {
+                    if (localStorage.getItem('tailspin-high-contrast') === 'true') {
+                        document.documentElement.classList.add('high-contrast');
+                    }
+                } catch (error) {
+                    if (!(error instanceof DOMException)) throw error;
+                }
+            })();
+        </script>
         <!-- Preconnect to improve font loading -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -45,5 +56,43 @@ const { title = "Tailspin Toys" } = Astro.props;
     body {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+    }
+
+    html.high-contrast,
+    html.high-contrast body,
+    html.high-contrast body * {
+        color: #ffffff !important;
+        border-color: #ffffff !important;
+    }
+
+    html.high-contrast,
+    html.high-contrast body,
+    html.high-contrast .bg-slate-800,
+    html.high-contrast .bg-slate-900,
+    html.high-contrast .bg-slate-950,
+    html.high-contrast .bg-blue-500,
+    html.high-contrast .bg-blue-700,
+    html.high-contrast .bg-white {
+        background-color: #000000 !important;
+        background-image: none !important;
+    }
+
+    html.high-contrast button,
+    html.high-contrast select,
+    html.high-contrast option {
+        background-color: #000000 !important;
+        color: #ffffff !important;
+    }
+
+    html.high-contrast a:hover,
+    html.high-contrast button:hover {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+
+    html.high-contrast :focus-visible {
+        outline: 3px solid #ffff00 !important;
+        outline-offset: 3px;
+        box-shadow: none !important;
     }
 </style>
